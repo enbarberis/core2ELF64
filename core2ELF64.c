@@ -159,7 +159,7 @@ int main(int argc, char **argv)
     phdr = (Elf64_Phdr *) &text_seg_data[ehdr->e_phoff];
     
     /* Print reconstructed segment/program header */ 
-    printf("[*] Reconostructed Program Header:\n\n");
+    printf("[*] Reconstructed Program Header:\n\n");
     printf("Index  %16s   Virt. addr. start    Virt. addr. end      Flags\n", "Type");
     for(i=0; i<ehdr->e_phnum; i++)
     {
