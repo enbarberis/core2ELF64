@@ -5,7 +5,7 @@
 Recover 64 bit ELF executables from memory dumps. Porting of 32 bit version [core2elf](https://bitbucket.org/renorobert/core2elf.git) project by Reno Robert, and [Silvio Cesare](https://bitbucket.org/renorobert/core2elf/src/9194ebc6d72b1c85f8f6844af85681580522d75b/core-reconstruction.txt?at=master&fileviewer=file-view-default)'s work.
 A part from the porting, this version, unlike the 32 bit version, supports also static, PIE and RELRO binarie's dump and not only dynamically linked binaries.
 
-## How to use it
+## Compilation
 To compile `core2ELF64` simply use the provided Makefile:
 
 ```
@@ -14,7 +14,7 @@ make all
 
 In this way the program is compiled together with all the provided examples.
 
-## Example
+## How to use it / Example
 
 First we need to obtain a core dump of a program. For that you can use the `gcore` utility or the provided `sample/dump.sh` script that before calling `gcore` it assures that [coredump_filter](man7.org/linux/man-pages/man5/core.5.html) is correctly set.
 
@@ -146,4 +146,4 @@ In the following diagram a graphical summary is shown:
 
 * As shown in the example the data segment that is rebuilt contains runtime values that may differ from the ones present at startup.
 
-* For binaries compiled with `-static` that use `libc` are correctly rebuild but when run always cause a segmentation fault.
+* For binaries compiled with `-static` that use `libc` are correctly rebuild but when run always cause a segmentation fault. Need some investigations to undesrtand the causes.

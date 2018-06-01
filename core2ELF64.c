@@ -1,3 +1,11 @@
+/* For original work visit 
+ * https://bitbucket.org/renorobert/core2elf.git
+ *
+ * Credits to Reno Robert and Silvio Cesare
+ *
+ * Barberis Enrico - 2018
+ * */
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <sys/types.h>
