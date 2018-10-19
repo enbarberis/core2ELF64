@@ -2,8 +2,15 @@
 
 ## Introduction
 
-Recover 64 bit ELF executables from memory dumps. Porting of 32 bit version [core2elf](https://bitbucket.org/renorobert/core2elf.git) project by Reno Robert, and [Silvio Cesare](https://bitbucket.org/renorobert/core2elf/src/9194ebc6d72b1c85f8f6844af85681580522d75b/core-reconstruction.txt?at=master&fileviewer=file-view-default)'s work.
-A part from the porting, this version, unlike the 32 bit version, supports also static, PIE and RELRO binarie's dump and not only dynamically linked binaries.
+**core2ELF64** is an utility to **recover 64 bit ELF executables from core dumps**. It supports a wide variety of core dumps:
+  * Core dumps of **Dynamically linked** binaries
+  * Core dumps of **PIE** binaries 
+  * Core dumps of **RELRO** enabled binaries
+  * Core dumps of **Statically linked** binaries without `glibc`
+
+This project is heavily based on [core2elf](https://bitbucket.org/renorobert/core2elf.git), a project by Reno Robert for 32 bit core dumps, which, in turn, it is based on [Silvio Cesare's white paper](https://bitbucket.org/renorobert/core2elf/src/9194ebc6d72b1c85f8f6844af85681580522d75b/core-reconstruction.txt?at=master&fileviewer=file-view-default).
+
+core2ELF64, unlike core2elf, supports to statically linked, PIE and RELRO binary dumps.
 
 ## Compilation
 To compile `core2ELF64` simply use the provided Makefile:
@@ -23,21 +30,18 @@ $ cd sample/hello
 
 $ ./hello &
 [1] 9143
-
-$ bss_var....[0x60106c]=0x13371337
+bss_var....[0x60106c]=0x13371337
 data_var...[0x601050]=0x00bef03e
 stack_var..[0x7ffda80f17dc]=0xcafecafe
 heap_var...[0x15fa010]=0xabcdabcd
 
-
 [1]+  Stopped                 ./hello
 
 $ sudo ../dump.sh $(pgrep hello)
-[sudo] password for brb: 
 Saved corefile core.9143
 ```
 
-When the dump is obtained to recover the binary is sufficient to call the `core2ELF64` program by passing as first argument the core dump file and as second parameter the desired name of the output file: 
+After the dump is obtained, in order to recover the binary it is sufficient to call the `core2ELF64` program by passing as first argument the core dump file and as second parameter the desired name of the output file: 
 
 ```
 $ ../../core2ELF64 core.9143 rebuild
@@ -129,14 +133,14 @@ The provided solution works with the dump of these kind of binaries:
 * Full RELRO binaries
 * Statically linked binaries without libc
 
-The steps to recover the binaries from the dump are the following:
+The steps to recover the binaries from the dump can be summarized as follow:
 
-1. Loop over all core dump's memory segments and search for the text segment, i.e. a memory region with Read and eXecute permissions for which the first 4 bytes correspond to the ELF magic numbers. In case of multiple segments that satisfy these requirements it is requested the user interaction to choose the correct one. 
+1. Loop over all core dump's memory segments and search for a text segment, i.e. a memory region with Read and eXecute permissions for which the first 4 bytes correspond to the ELF magic numbers. In case of multiple segments that satisfy these requirements, it is requested the user interaction to choose the correct one. 
 2. From the recovered text segment it is possible to recover the ELF program/segment header. From this it is possible to recover all executable segments. 
-3. All the recovered segments are written to the output file. This is enough for statically linked program to work.
-4. To help static analysis, the sections that have a 1:1 match to the recovered segments are written in the final ELF. 
+3. All the recovered segments are written to the output file. This process is enough for statically linked program to work.
+4. To help binary analysis, the sections that have a 1:1 match to the recovered segments are written in the recovered ELF. 
 5. The recovered dynamic segment, if present, is analyzed to recover other sections. Thanks to these information it is possible to fix the GOT values so that they point to the correct place in the PLT.
-6. Finally the section header is written to the output ELF
+6. Finally, the section header is written to the recovered ELF
  
 In the following diagram a graphical summary is shown:
 
@@ -146,4 +150,4 @@ In the following diagram a graphical summary is shown:
 
 * As shown in the example the data segment that is rebuilt contains runtime values that may differ from the ones present at startup.
 
-* For binaries compiled with `-static` that use `libc` are correctly rebuild but when run always cause a segmentation fault. Need some investigations to undesrtand the causes.
+* For binaries compiled with `-static` that use `libc` are correctly rebuild but when run always cause a segmentation fault. Need some investigations to undesrtand the cause.
