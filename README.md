@@ -150,4 +150,4 @@ In the following diagram a graphical summary is shown:
 
 * As shown in the example the data segment that is rebuilt contains runtime values that may differ from the ones present at startup.
 
-* For binaries compiled with `-static` that use `libc` are correctly rebuild but when run always cause a segmentation fault. Need some investigations to undesrtand the cause.
+* For binaries compiled with `-static` that use `libc` are correctly rebuild but when run always cause a segmentation fault. Need some investigations to understand the cause.
